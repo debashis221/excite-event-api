@@ -7,22 +7,25 @@ import {
   updateEvents,
 } from "../service/events.service";
 import log from "../utils/logger";
+import { sendResponse } from "../utils/sendReponse";
 
 export async function createEventsHandler(req: Request, res: Response) {
   try {
     const body = req.body;
-    req.body.image = req.file.originalname;
+    const location = req.body.location.split(",");
+    const tempArray: number[] = [];
+    location.forEach((element: string) => {
+      tempArray.push(parseFloat(element));
+    });
+    req.body.image = req.file?.originalname;
+    req.body.location = tempArray;
     const events = await createEvents(body);
     if (events) {
-      return res.status(200).json({
-        status: "success",
-        message: "Events created successfully",
-        statusCode: 200,
-        events,
-      });
+      return sendResponse(res, 200, "Events created successfully!", events);
     }
   } catch (error) {
     log.error(error);
+    return sendResponse(res, 500, error as string, null);
   }
 }
 
@@ -30,17 +33,10 @@ export async function getEventsHandler(req: Request, res: Response) {
   try {
     const data = await findEvents();
     if (data)
-      return res
-        .status(200)
-        .json({
-          status: "success",
-          message: "Events retrieved successfully",
-          statusCode: 200,
-          data,
-        })
-        .end();
+      return sendResponse(res, 200, "Events Fetched Successfully!", data);
   } catch (error) {
     log.error(error);
+    return sendResponse(res, 500, error as string, null);
   }
 }
 
