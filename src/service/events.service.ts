@@ -9,7 +9,7 @@ export function findEventsById(id: string) {
 }
 
 export function findEvents() {
-  return EventsModel.find();
+  return EventsModel.find().sort({ createdAt: -1 });
 }
 
 export function updateEvents(id: string, input: Partial<Events>) {

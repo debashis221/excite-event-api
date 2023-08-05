@@ -19,13 +19,13 @@ export async function createSessionHandler(
   const user = await findUserByEmail(email);
 
   if (!user) {
-    return res.status(404).json({ status: 404, message: message });
+    return res.status(404).json({ status: 404, message: message }).end();
   }
 
   const isValid = await user.validatePassword(password);
 
   if (!isValid) {
-    return res.status(401).json({ status: 401, message: message });
+    return res.status(401).json({ status: 401, message: message }).end();
   }
 
   // sign a access token
@@ -35,13 +35,15 @@ export async function createSessionHandler(
 
   // send the tokens
 
-  return res.json({
-    status: 200,
-    message: "Login successful",
-    accessToken,
-    refreshToken,
-    data: user,
-  });
+  return res
+    .json({
+      status: 200,
+      message: "Login successful",
+      accessToken,
+      refreshToken,
+      data: user,
+    })
+    .end();
 }
 
 export async function refreshAccessTokenHandler(req: Request, res: Response) {
@@ -53,22 +55,22 @@ export async function refreshAccessTokenHandler(req: Request, res: Response) {
   );
 
   if (!decoded) {
-    return res.status(401).send("Could not refresh access token");
+    return res.status(401).send("Could not refresh access token").end();
   }
 
   const session = await findSessionById(decoded.session);
 
   if (!session || !session.valid) {
-    return res.status(401).send("Could not refresh access token");
+    return res.status(401).send("Could not refresh access token").end();
   }
 
   const user = await findUserById(String(session.user));
 
   if (!user) {
-    return res.status(401).send("Could not refresh access token");
+    return res.status(401).send("Could not refresh access token").end();
   }
 
   const accessToken = signAccessToken(user);
 
-  return res.send({ accessToken });
+  return res.send({ accessToken }).end();
 }

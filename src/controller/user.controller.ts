@@ -43,8 +43,8 @@ export async function updateUserHandler(
   try {
     const { id } = req.params;
 
-    if (req.files?.image) {
-      req.body.image = req.files.image[0].originalname;
+    if (req.file) {
+      req.body.image = req.file.originalname;
     }
 
     const user = await updateUser(id, req.body);
