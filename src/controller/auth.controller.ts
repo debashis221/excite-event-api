@@ -8,6 +8,7 @@ import {
 } from "../service/auth.service";
 import { findUserByEmail, findUserById } from "../service/user.service";
 import { verifyJwt } from "../utils/jwt";
+import { sendResponse } from "../utils/sendReponse";
 
 export async function createSessionHandler(
   req: Request<{}, {}, CreateSessionInput>,
@@ -19,13 +20,13 @@ export async function createSessionHandler(
   const user = await findUserByEmail(email);
 
   if (!user) {
-    return res.status(404).json({ status: 404, message: message }).end();
+    return sendResponse(res, 401, message, null);
   }
 
   const isValid = await user.validatePassword(password);
 
   if (!isValid) {
-    return res.status(401).json({ status: 401, message: message }).end();
+    return sendResponse(res, 401, message, null);
   }
 
   // sign a access token
@@ -34,16 +35,11 @@ export async function createSessionHandler(
   const refreshToken = await signRefreshToken({ userId: user._id });
 
   // send the tokens
-
-  return res
-    .json({
-      status: 200,
-      message: "Login successful",
-      accessToken,
-      refreshToken,
-      data: user,
-    })
-    .end();
+  return sendResponse(res, 200, "Login successful", {
+    accessToken,
+    refreshToken,
+    user,
+  });
 }
 
 export async function refreshAccessTokenHandler(req: Request, res: Response) {
@@ -55,22 +51,22 @@ export async function refreshAccessTokenHandler(req: Request, res: Response) {
   );
 
   if (!decoded) {
-    return res.status(401).send("Could not refresh access token").end();
+    return sendResponse(res, 401, "Could not refresh access token", null);
   }
 
   const session = await findSessionById(decoded.session);
 
   if (!session || !session.valid) {
-    return res.status(401).send("Could not refresh access token").end();
+    return sendResponse(res, 401, "Could not refresh access token", null);
   }
 
   const user = await findUserById(String(session.user));
 
   if (!user) {
-    return res.status(401).send("Could not refresh access token").end();
+    return sendResponse(res, 401, "Could not refresh access token", null);
   }
 
   const accessToken = signAccessToken(user);
 
-  return res.send({ accessToken }).end();
+  return sendResponse(res, 200, "Access token refreshed", { accessToken });
 }

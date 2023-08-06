@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { sendResponse } from "../utils/sendReponse";
 
-const requireUser = (req: Request, res: Response, next: NextFunction) => {
+export const requireUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const user = res.locals.user;
-
+  console.log(user);
   if (!user) {
-    return res.sendStatus(403).json({
-      status: 403,
-      message: "You are not allowed to access this route",
-    });
+    return sendResponse(res, 401, "Unauthorized", null);
   }
 
   return next();
 };
-
-export default requireUser;
