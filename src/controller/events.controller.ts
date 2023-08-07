@@ -68,13 +68,15 @@ export async function updateEventsHandler(
   try {
     const id = req.params.id;
     const body = req.body;
-    const location = req.body.location.split(",");
-    const tempArray: number[] = [];
-    location.forEach((element: string) => {
-      tempArray.push(parseFloat(element));
-    });
+    if (req.body.location) {
+      const location = req.body.location.split(",");
+      const tempArray: number[] = [];
+      location.forEach((element: string) => {
+        tempArray.push(parseFloat(element));
+      });
+      req.body.location = tempArray;
+    }
     req.body.image = req.file?.originalname;
-    req.body.location = tempArray;
     const data = await updateEvents(id, body);
     if (data) {
       return sendResponse(res, 200, "Events updated successfully!", data);
