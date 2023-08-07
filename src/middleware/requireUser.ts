@@ -7,7 +7,6 @@ export const requireUser = (
   next: NextFunction
 ) => {
   const user = res.locals.user;
-  console.log(user);
   if (!user) {
     return sendResponse(res, 401, "Unauthorized", null);
   }

@@ -22,7 +22,7 @@ router.get("/api/events/:id", asyncMiddleware(getEventsByIdHandler));
 router.patch(
   "/api/events/:id",
   requireUser,
-  asyncMiddleware(updateEventsHandler)
+  updateEventsHandler
 );
 router.delete(
   "/api/events/:id",
