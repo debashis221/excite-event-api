@@ -68,6 +68,7 @@ export async function updateEventsHandler(
   try {
     const id = req.params.id;
     const body = req.body;
+    console.log(body);
     if (req.body.location) {
       const location = req.body.location.split(",");
       const tempArray: number[] = [];
