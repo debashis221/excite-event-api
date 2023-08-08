@@ -19,11 +19,7 @@ router.post(
   asyncMiddleware(createEventsHandler)
 );
 router.get("/api/events/:id", asyncMiddleware(getEventsByIdHandler));
-router.patch(
-  "/api/events/:id",
-  requireUser,
-  updateEventsHandler
-);
+router.put("/api/events/:id", requireUser, updateEventsHandler);
 router.delete(
   "/api/events/:id",
   requireUser,

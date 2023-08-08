@@ -20,13 +20,13 @@ export async function createSessionHandler(
   const user = await findUserByEmail(email);
 
   if (!user) {
-    return sendResponse(res, 401, message, null);
+    return sendResponse(res, 400, "We couldn't find any user with that email.", null);
   }
 
   const isValid = await user.validatePassword(password);
 
   if (!isValid) {
-    return sendResponse(res, 401, message, null);
+    return sendResponse(res, 400, "Enter correct password!", null);
   }
 
   // sign a access token

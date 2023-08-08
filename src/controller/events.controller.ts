@@ -57,7 +57,7 @@ export async function getEventsByIdHandler(
       return sendResponse(res, 200, "Events Fetched Successfully!", data);
   } catch (error) {
     log.error(error);
-    return sendResponse(res, 500, error as string, null);
+    return sendResponse(res, 500, (error as any).err.message, null);
   }
 }
 
@@ -68,7 +68,6 @@ export async function updateEventsHandler(
   try {
     const id = req.params.id;
     const body = req.body;
-    console.log(req.body);
     if (req.body.location) {
       const location = req.body.location.split(",");
       const tempArray: number[] = [];
@@ -83,8 +82,8 @@ export async function updateEventsHandler(
       return sendResponse(res, 200, "Events updated successfully!", data);
     }
   } catch (error) {
-    log.error(error);
-    return sendResponse(res, 500, error as string, null);
+    log.error((error as any).message);
+    return sendResponse(res, 500, (error as any).message, null);
   }
 }
 
